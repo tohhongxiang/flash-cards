@@ -40,3 +40,32 @@ Test commit
 git add .
 git commit -m "feat: Add husky, lint-staged and prettier"
 ```
+
+If you get the following error:
+
+```
+.husky/pre-commit: .husky/pre-commit: cannot execute binary file
+husky - pre-commit script failed (code 126)
+```
+
+Delete `.husky/pre-commit` and manually recreate the file, and try again
+
+Now, we set up plugins for prettier and eslint
+
+## Prettier
+
+Create a `.prettierrc` in the root.
+
+```sh
+npm install -D prettier prettier-plugin-tailwindcss
+```
+
+```json
+{
+    "trailingComma": "es5",
+    "tabWidth": 4,
+    "semi": true,
+    "singleQuote": false,
+    "plugins": ["prettier-plugin-tailwindcss"]
+}
+```
