@@ -57,7 +57,7 @@ Now, we set up plugins for prettier and eslint
 Create a `.prettierrc` in the root.
 
 ```sh
-npm install -D prettier prettier-plugin-tailwindcss
+npm install -D prettier-plugin-tailwindcss
 ```
 
 ```json
@@ -67,5 +67,46 @@ npm install -D prettier prettier-plugin-tailwindcss
     "semi": true,
     "singleQuote": false,
     "plugins": ["prettier-plugin-tailwindcss"]
+}
+```
+
+## ESLint
+
+```sh
+npm install eslint eslint-plugin-react eslint-plugin-react-hooks @typescript-eslint/eslint-plugin eslint-config-prettier eslint-plugin-prettier eslint-plugin-jsx-a11y --save-dev --force
+```
+
+> Might need to add `--force` due to version conflict
+
+Then fill up `.eslint.json`
+
+```json
+{
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true
+        }
+    },
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es6": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:import/recommended",
+        "plugin:import/typescript",
+        "plugin:react/recommended",
+        "plugin:react-hooks/recommended",
+        "plugin:jsx-a11y/recommended",
+        "next/core-web-vitals",
+        "prettier"
+    ],
+    "plugins": ["@typescript-eslint", "import", "prettier"]
 }
 ```
