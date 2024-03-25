@@ -1,4 +1,19 @@
-# Setting Up Husky, Prettier and Lint-Staged in your Next App
+# Setup
+
+```sh
+npm install
+npm run dev
+```
+
+# Additional Comments
+
+## Pushing Schema Changes to Supabase
+
+```sh
+npx drizzle-kit push:pg
+```
+
+## Setting Up Husky, Prettier and Lint-Staged in your Next App
 
 ```sh
 npm i husky lint-staged prettier --save-dev
@@ -52,7 +67,7 @@ Delete `.husky/pre-commit` and manually recreate the file, and try again
 
 Now, we set up plugins for prettier and eslint
 
-## Prettier
+### Prettier
 
 Create a `.prettierrc` in the root.
 
@@ -70,13 +85,19 @@ npm install -D prettier-plugin-tailwindcss
 }
 ```
 
-## ESLint
+### ESLint
 
 ```sh
-npm install eslint eslint-plugin-react eslint-plugin-react-hooks @typescript-eslint/eslint-plugin eslint-config-prettier eslint-plugin-prettier eslint-plugin-jsx-a11y --save-dev --force
+npm install eslint eslint-plugin-react eslint-plugin-react-hooks @typescript-eslint/eslint-plugin eslint-config-prettier eslint-plugin-prettier eslint-plugin-jsx-a11y --save-dev
 ```
 
-> Might need to add `--force` due to version conflict
+If you get errors with conflicting versions, try the following command:
+
+```sh
+npm i @typescript-eslint/parser@latest
+```
+
+Then run the install command again. If all else fails, force the install by using `--force`
 
 Then fill up `.eslint.json`
 
@@ -110,3 +131,9 @@ Then fill up `.eslint.json`
     "plugins": ["@typescript-eslint", "import", "prettier"]
 }
 ```
+
+# Resources
+
+-   https://dribbble.com/shots/22970964-Language-flashcards
+-   https://dribbble.com/shots/14043352-Flashcard-App-Concept
+-   https://dribbble.com/shots/22487908-Kanji-Study-Flashcards
