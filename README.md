@@ -1,5 +1,9 @@
 # Setup
 
+Copy `.env.example` to `.env.local` and fill in the details
+
+-   `DATABASE_URL`: URL to postgres database
+
 ```sh
 npm install
 npm run dev
