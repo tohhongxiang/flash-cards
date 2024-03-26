@@ -21,7 +21,7 @@ export const getDecks = async () => {
 export const getDeck = async (id: DeckType["id"]) => {
     const data = await db.query.deck.findFirst({
         where: eq(deck.id, id),
-        with: { cards: true },
+        with: { cards: { orderBy: (card, { desc }) => [desc(card.id)] } },
     });
     return data;
 };

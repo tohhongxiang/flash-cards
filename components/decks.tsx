@@ -2,7 +2,7 @@
 
 import { CreatedDeckType, DeckType } from "@/types/deckType";
 import AddDeck from "./add-deck";
-import { addDeck, deleteDeck } from "@/actions/deckActions";
+import { addDeck, deleteDeck, editDeck } from "@/actions/deckActions";
 import { useState } from "react";
 import DeckPreview from "./deck-preview";
 
@@ -23,6 +23,16 @@ export default function Decks({ decks }: DecksProps) {
         setDeckItems((c) => c.filter((d) => d.id !== id));
     };
 
+    const handleEditDeck = (
+        id: DeckType["id"],
+        updatedDeck: Partial<DeckType>
+    ) => {
+        editDeck(id, updatedDeck);
+        setDeckItems((c) =>
+            c.map((d) => (d.id === id ? { ...d, ...updatedDeck } : d))
+        );
+    };
+
     return (
         <div className="grid grid-cols-1 items-center justify-center gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             <AddDeck onSubmit={handleAddDeck} />
@@ -30,6 +40,7 @@ export default function Decks({ decks }: DecksProps) {
                 <DeckPreview
                     deck={deck}
                     deleteDeck={handleDeleteDeck}
+                    editDeck={handleEditDeck}
                     key={deck.id}
                 />
             ))}

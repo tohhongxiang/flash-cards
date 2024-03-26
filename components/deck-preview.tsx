@@ -2,7 +2,7 @@
 
 import { DeckType } from "@/types/deckType";
 import { Button } from "./ui/button";
-import { Ellipsis, Info, Trash } from "lucide-react";
+import { Ellipsis, Info, Pencil, Trash } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -20,13 +20,16 @@ import {
 } from "@/components/ui/dialog";
 import { useState } from "react";
 import Link from "next/link";
+import FormDialog from "./form-dialog";
 
 interface DeckProps {
     deck: DeckType;
     deleteDeck: (id: DeckType["id"]) => void;
+    editDeck: (id: DeckType["id"], updatedDeck: Partial<DeckType>) => void;
 }
-export default function DeckPreview({ deck, deleteDeck }: DeckProps) {
+export default function DeckPreview({ deck, deleteDeck, editDeck }: DeckProps) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
 
     return (
         <>
@@ -49,6 +52,16 @@ export default function DeckPreview({ deck, deleteDeck }: DeckProps) {
                                 <DropdownMenuItem className="cursor-pointer hover:bg-foreground/10">
                                     <Info className="mr-2 h-4 w-4" />
                                     View
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    className="cursor-pointer hover:bg-foreground/10"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setIsEditing(true);
+                                    }}
+                                >
+                                    <Pencil className="mr-2 h-4 w-4" />
+                                    Edit
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
@@ -73,6 +86,17 @@ export default function DeckPreview({ deck, deleteDeck }: DeckProps) {
                     </p>
                 </div>
             </Link>
+            <FormDialog
+                title="Edit Deck"
+                description="Change the title and description of your deck below"
+                open={isEditing}
+                onOpenChange={setIsEditing}
+                initialData={{
+                    title: deck.title,
+                    description: deck.description,
+                }}
+                onSubmit={(updatedDeck) => editDeck(deck.id, updatedDeck)}
+            />
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
