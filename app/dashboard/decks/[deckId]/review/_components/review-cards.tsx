@@ -1,6 +1,6 @@
 "use client";
 
-import { editCard } from "@/actions/cardActions";
+import { updateCardAfterReview } from "@/actions/cardActions";
 import { Button } from "@/components/ui/button";
 import { CardType } from "@/types/cardType";
 import Link from "next/link";
@@ -11,28 +11,13 @@ interface ReviewCardProps {
     cards: CardType[];
 }
 
-const ONE_DAY = 24 * 60 * 60 * 1000;
-const THIRTY_MINUTES = 30 * 60 * 1000;
-
-const feedbackTime = {
-    good: ONE_DAY,
-    ok: THIRTY_MINUTES,
-};
-
 export default function ReviewCards({ cards }: ReviewCardProps) {
     const [index, setIndex] = useState(0);
     const [isShowingAnswer, setIsShowingAnswer] = useState(false);
 
-    const handleFeedback = (feedback: "again" | "ok" | "good") => {
-        if (feedback !== "again") {
-            setIndex((c) => c + 1);
-            editCard(cards[index].id, {
-                nextReview: new Date(
-                    new Date().getTime() + feedbackTime[feedback]
-                ),
-            });
-        }
-
+    const handleFeedback = (feedback: "AGAIN" | "HARD" | "GOOD" | "EASY") => {
+        updateCardAfterReview(cards[index].id, feedback);
+        setIndex((c) => c + 1);
         setIsShowingAnswer(false);
     };
 
@@ -62,22 +47,29 @@ export default function ReviewCards({ cards }: ReviewCardProps) {
                             <Button
                                 size="lg"
                                 variant="secondary"
-                                onClick={() => handleFeedback("again")}
+                                onClick={() => handleFeedback("AGAIN")}
                             >
-                                Again (1 minute)
+                                Again
                             </Button>
                             <Button
                                 size="lg"
                                 variant="secondary"
-                                onClick={() => handleFeedback("ok")}
+                                onClick={() => handleFeedback("HARD")}
                             >
-                                OK (30 minutes)
+                                Hard
                             </Button>
                             <Button
                                 size="lg"
-                                onClick={() => handleFeedback("good")}
+                                variant="secondary"
+                                onClick={() => handleFeedback("GOOD")}
                             >
-                                Good (1 Day)
+                                Good
+                            </Button>
+                            <Button
+                                size="lg"
+                                onClick={() => handleFeedback("EASY")}
+                            >
+                                Easy
                             </Button>
                         </div>
                     ) : (

@@ -6,6 +6,10 @@ export type CardType = {
     back: string;
     deckId: DeckType["id"];
     nextReview: Date;
+    stage: "LEARNING" | "REVIEW";
+    easeFactor: number;
+    currentStep: number;
+    currentInterval: string;
 };
 
 export type CreatedCardType = Omit<CardType, "id" | "deckId">;

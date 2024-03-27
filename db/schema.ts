@@ -1,5 +1,21 @@
 import { relations, sql } from "drizzle-orm";
-import { text, pgTable, serial, timestamp } from "drizzle-orm/pg-core";
+import {
+    text,
+    pgTable,
+    serial,
+    timestamp,
+    pgEnum,
+    integer,
+    interval,
+    real,
+} from "drizzle-orm/pg-core";
+
+export const stageEnum = pgEnum("stage", ["LEARNING", "REVIEW"]);
+export const learningIntervals = pgEnum("learning_intervals", [
+    "00:01:00",
+    "00:10:00",
+    "24:00:00",
+]);
 
 export const deck = pgTable("decks", {
     id: serial("id").primaryKey(),
@@ -11,12 +27,18 @@ export const card = pgTable("cards", {
     id: serial("id").primaryKey(),
     front: text("front").notNull(),
     back: text("back").notNull(),
-    nextReview: timestamp("next_review_date")
-        .default(sql`CURRENT_TIMESTAMP`)
-        .notNull(),
     deckId: serial("deck_id")
         .notNull()
         .references(() => deck.id, { onDelete: "cascade" }),
+    stage: stageEnum("stage").notNull().default("LEARNING"),
+    easeFactor: real("ease_factor").notNull().default(2.5),
+    currentStep: integer("current_step").notNull().default(0),
+    currentInterval: interval("current_interval", { fields: "day to minute" })
+        .notNull()
+        .default("1 minute"),
+    nextReview: timestamp("next_review_date", { mode: "date" })
+        .default(sql`CURRENT_TIMESTAMP`)
+        .notNull(),
 });
 
 export const deckRelations = relations(deck, ({ many }) => ({

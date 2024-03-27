@@ -15,6 +15,7 @@ interface DeckProps {
 
 export default function Deck({ deck }: DeckProps) {
     const [deckItem, setDeckItem] = useState(deck);
+    console.log(deckItem.cards);
 
     const handleCreateCard = async (
         deckId: DeckType["id"],
@@ -48,14 +49,10 @@ export default function Deck({ deck }: DeckProps) {
         }));
     };
 
-    const cardsToReview = deckItem.cards.filter(
-        (card) => card.nextReview.getTime() <= new Date().getTime() + 1000 // 1 second delay time for adding
-    );
-
-    console.log(
-        new Date().getTime(),
-        deckItem.cards.map((card) => card.nextReview.getTime())
-    );
+    // const cardsToReview = deckItem.cards.filter(
+    //     (card) => card.nextReview.getTime() <= new Date().getTime() + 1000 // 1 second delay time for adding
+    // );
+    const cardsToReview = deckItem.cards ?? [];
 
     return (
         <div className="flex flex-col items-center p-4">
