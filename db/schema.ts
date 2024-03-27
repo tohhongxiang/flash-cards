@@ -1,3 +1,4 @@
+import { ONE_MINUTE } from "@/actions/constants";
 import { relations, sql } from "drizzle-orm";
 import {
     text,
@@ -6,16 +7,10 @@ import {
     timestamp,
     pgEnum,
     integer,
-    interval,
     real,
 } from "drizzle-orm/pg-core";
 
 export const stageEnum = pgEnum("stage", ["LEARNING", "REVIEW"]);
-export const learningIntervals = pgEnum("learning_intervals", [
-    "00:01:00",
-    "00:10:00",
-    "24:00:00",
-]);
 
 export const deck = pgTable("decks", {
     id: serial("id").primaryKey(),
@@ -33,9 +28,9 @@ export const card = pgTable("cards", {
     stage: stageEnum("stage").notNull().default("LEARNING"),
     easeFactor: real("ease_factor").notNull().default(2.5),
     currentStep: integer("current_step").notNull().default(0),
-    currentInterval: interval("current_interval", { fields: "day to minute" })
+    currentIntervalSeconds: integer("current_interval_seconds")
         .notNull()
-        .default("1 minute"),
+        .default(ONE_MINUTE),
     nextReview: timestamp("next_review_date", { mode: "date" })
         .default(sql`CURRENT_TIMESTAMP`)
         .notNull(),

@@ -15,7 +15,6 @@ interface DeckProps {
 
 export default function Deck({ deck }: DeckProps) {
     const [deckItem, setDeckItem] = useState(deck);
-    console.log(deckItem.cards);
 
     const handleCreateCard = async (
         deckId: DeckType["id"],
@@ -49,10 +48,9 @@ export default function Deck({ deck }: DeckProps) {
         }));
     };
 
-    // const cardsToReview = deckItem.cards.filter(
-    //     (card) => card.nextReview.getTime() <= new Date().getTime() + 1000 // 1 second delay time for adding
-    // );
-    const cardsToReview = deckItem.cards ?? [];
+    const cardsToReview = deckItem.cards.filter(
+        (card) => card.nextReview.getTime() <= new Date().getTime() + 1000 // 1 second delay time for adding
+    );
 
     return (
         <div className="flex flex-col items-center p-4">
@@ -61,11 +59,11 @@ export default function Deck({ deck }: DeckProps) {
                 <p className="text-muted-foreground">{deckItem.description}</p>
                 {deckItem.cards.length > 0 ? (
                     <div className="flex items-center py-4">
-                        <Button disabled={cardsToReview.length === 0}>
-                            <Link href={`/dashboard/decks/${deck.id}/review`}>
+                        <Link href={`/dashboard/decks/${deck.id}/review`}>
+                            <Button disabled={cardsToReview.length === 0}>
                                 Review ({cardsToReview.length})
-                            </Link>
-                        </Button>
+                            </Button>
+                        </Link>
                     </div>
                 ) : null}
             </div>

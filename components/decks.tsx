@@ -3,8 +3,9 @@
 import { CreatedDeckType, DeckType } from "@/types/deckType";
 import AddDeck from "./add-deck";
 import { addDeck, deleteDeck, editDeck } from "@/actions/deckActions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DeckPreview from "./deck-preview";
+import { useRouter } from "next/navigation";
 
 interface DecksProps {
     decks: DeckType[];
@@ -31,6 +32,11 @@ export default function Decks({ decks }: DecksProps) {
             c.map((d) => (d.id === id ? { ...d, ...updatedDeck } : d))
         );
     };
+
+    const router = useRouter();
+    useEffect(() => {
+        return () => router.refresh();
+    }, [router]);
 
     return (
         <div className="grid grid-cols-1 items-center justify-center gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

@@ -1,11 +1,17 @@
 "use server";
 
 import db from "@/db/drizzle";
-import { card, learningIntervals } from "@/db/schema";
+import { card } from "@/db/schema";
 import { CardType } from "@/types/cardType";
 import { DeckType } from "@/types/deckType";
 import { eq } from "drizzle-orm";
-import { intervalToMilliseconds } from "./utils";
+import {
+    EASY_MULTIPLIER,
+    HARD_MULTIPLIER,
+    LEARNING_INTERVALS,
+    MINIMUM_EASE_FACTOR,
+    ONE_DAY,
+} from "./constants";
 
 export const addCard = async (newCard: Omit<CardType, "id">) => {
     const insertedCards = await db.insert(card).values(newCard).returning();
@@ -45,8 +51,6 @@ export const editCard = async (
     return updatedCards[0];
 };
 
-const MINIMUM_EASE_FACTOR = 1.3;
-// const HARD_MULTIPLIER = 1.2;
 export const updateCardAfterReview = async (
     id: CardType["id"],
     feedback: "AGAIN" | "HARD" | "GOOD" | "EASY"
@@ -66,15 +70,22 @@ export const updateCardAfterReview = async (
                 cardToUpdate.easeFactor - 0.2,
                 MINIMUM_EASE_FACTOR
             );
+
             cardToUpdate.currentStep = 0;
-            cardToUpdate.currentInterval = "24:00:00";
+            cardToUpdate.currentIntervalSeconds = ONE_DAY;
         } else if (feedback === "HARD") {
             cardToUpdate.easeFactor = Math.max(
                 cardToUpdate.easeFactor - 0.15,
                 MINIMUM_EASE_FACTOR
             );
-            // todo: Figure out how to increase interval
-            // cardToUpdate.currentInterval *= intervalToMilliseconds(cardToUpdate.currentInterval) * HARD_MULTIPLIER
+
+            cardToUpdate.currentIntervalSeconds *= HARD_MULTIPLIER;
+        } else if (feedback === "GOOD") {
+            cardToUpdate.currentIntervalSeconds *= cardToUpdate.easeFactor;
+        } else {
+            cardToUpdate.currentIntervalSeconds *=
+                cardToUpdate.easeFactor * EASY_MULTIPLIER;
+            cardToUpdate.easeFactor += 0.15;
         }
     } else if (cardToUpdate.stage === "LEARNING") {
         if (feedback === "AGAIN") {
@@ -83,21 +94,24 @@ export const updateCardAfterReview = async (
             cardToUpdate.currentStep += 1;
         }
 
-        cardToUpdate.currentInterval =
-            learningIntervals.enumValues[cardToUpdate.currentStep];
+        cardToUpdate.currentIntervalSeconds =
+            LEARNING_INTERVALS[cardToUpdate.currentStep];
 
         if (
             feedback === "EASY" ||
-            cardToUpdate.currentStep > learningIntervals.enumValues.length - 1
+            cardToUpdate.currentStep > LEARNING_INTERVALS.length - 1
         ) {
             cardToUpdate.stage = "REVIEW";
             cardToUpdate.currentStep = 0;
-            cardToUpdate.currentInterval = "1 day";
+            cardToUpdate.currentIntervalSeconds = ONE_DAY;
         }
     }
 
+    cardToUpdate.currentIntervalSeconds = Math.floor(
+        cardToUpdate.currentIntervalSeconds
+    );
     cardToUpdate.nextReview = new Date(
-        Date.now() + intervalToMilliseconds(cardToUpdate.currentInterval)
+        Date.now() + cardToUpdate.currentIntervalSeconds * 1000
     );
 
     const updatedCard = await db

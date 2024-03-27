@@ -9,7 +9,7 @@ export type CardType = {
     stage: "LEARNING" | "REVIEW";
     easeFactor: number;
     currentStep: number;
-    currentInterval: string;
+    currentIntervalSeconds: number;
 };
 
 export type CreatedCardType = Omit<CardType, "id" | "deckId">;

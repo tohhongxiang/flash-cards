@@ -6,7 +6,7 @@ export default async function ReviewPage({
 }: {
     params: { deckId: string };
 }) {
-    const cards = await getCards(parseInt(params.deckId));
+    const cards = await getCards(parseInt(params.deckId), { toReview: true });
 
     if (!cards) {
         return <p>Deck not found</p>;
