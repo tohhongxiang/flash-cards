@@ -6,7 +6,8 @@ import { CreatedDeckType, DeckType } from "@/types/deckType";
 import { asc, eq } from "drizzle-orm";
 
 export const addDeck = async (newDeck: CreatedDeckType) => {
-    await db.insert(deck).values(newDeck);
+    const insertedDecks = await db.insert(deck).values(newDeck).returning();
+    return insertedDecks[0];
 };
 
 export const getDecks = async () => {
@@ -27,9 +28,18 @@ export const getDeck = async (id: DeckType["id"]) => {
 };
 
 export const editDeck = async (id: number, updatedDeck: Partial<DeckType>) => {
-    await db.update(deck).set(updatedDeck).where(eq(deck.id, id));
+    const updatedDecks = await db
+        .update(deck)
+        .set(updatedDeck)
+        .where(eq(deck.id, id))
+        .returning();
+    return updatedDecks[0];
 };
 
 export const deleteDeck = async (id: number) => {
-    await db.delete(deck).where(eq(deck.id, id));
+    const deletedDecks = await db
+        .delete(deck)
+        .where(eq(deck.id, id))
+        .returning();
+    return deletedDecks[0];
 };

@@ -3,7 +3,7 @@
 import { DeckType } from "@/types/deckType";
 import AddCard from "./add-card";
 import { CardType, CreatedCardType } from "@/types/cardType";
-import { addCard, deleteCard } from "@/actions/cardActions";
+import { addCard, deleteCard, editCard } from "@/actions/cardActions";
 import { useState } from "react";
 import CardPreview from "./card-preview";
 import { Button } from "./ui/button";
@@ -16,26 +16,46 @@ interface DeckProps {
 export default function Deck({ deck }: DeckProps) {
     const [deckItem, setDeckItem] = useState(deck);
 
-    const handleCreateCard = (
+    const handleCreateCard = async (
         deckId: DeckType["id"],
         card: CreatedCardType
     ) => {
-        const newCard = { ...card, deckId };
-        const newCardId = (deckItem.cards.at(-1)?.id || 0) + 1;
-        addCard(newCard);
+        const newCard = await addCard({ ...card, deckId });
         setDeckItem((previousDeck) => ({
             ...previousDeck,
-            cards: [{ ...newCard, id: newCardId }, ...previousDeck.cards],
+            cards: [newCard, ...previousDeck.cards],
         }));
     };
 
-    const handleDeleteCard = (cardId: CardType["id"]) => {
+    const handleDeleteCard = async (cardId: CardType["id"]) => {
         deleteCard(cardId);
         setDeckItem((previousDeck) => ({
             ...previousDeck,
             cards: previousDeck.cards.filter((card) => card.id !== cardId),
         }));
     };
+
+    const handleEditCard = async (
+        cardId: CardType["id"],
+        updatedCard: Partial<CardType>
+    ) => {
+        editCard(cardId, updatedCard);
+        setDeckItem((previousDeck) => ({
+            ...previousDeck,
+            cards: previousDeck.cards.map((card) =>
+                card.id === cardId ? { ...card, ...updatedCard } : card
+            ),
+        }));
+    };
+
+    const cardsToReview = deckItem.cards.filter(
+        (card) => card.nextReview.getTime() <= new Date().getTime() + 1000 // 1 second delay time for adding
+    );
+
+    console.log(
+        new Date().getTime(),
+        deckItem.cards.map((card) => card.nextReview.getTime())
+    );
 
     return (
         <div className="flex flex-col items-center p-4">
@@ -44,9 +64,9 @@ export default function Deck({ deck }: DeckProps) {
                 <p className="text-muted-foreground">{deckItem.description}</p>
                 {deckItem.cards.length > 0 ? (
                     <div className="flex items-center py-4">
-                        <Button asChild>
+                        <Button disabled={cardsToReview.length === 0}>
                             <Link href={`/dashboard/decks/${deck.id}/review`}>
-                                Review
+                                Review ({cardsToReview.length})
                             </Link>
                         </Button>
                     </div>
@@ -63,6 +83,7 @@ export default function Deck({ deck }: DeckProps) {
                         <CardPreview
                             card={card}
                             deleteCard={handleDeleteCard}
+                            editCard={handleEditCard}
                         />
                     </li>
                 ))}

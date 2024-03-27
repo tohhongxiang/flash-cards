@@ -1,5 +1,5 @@
-import { relations } from "drizzle-orm";
-import { text, pgTable, serial, integer } from "drizzle-orm/pg-core";
+import { relations, sql } from "drizzle-orm";
+import { text, pgTable, serial, timestamp } from "drizzle-orm/pg-core";
 
 export const deck = pgTable("decks", {
     id: serial("id").primaryKey(),
@@ -11,7 +11,10 @@ export const card = pgTable("cards", {
     id: serial("id").primaryKey(),
     front: text("front").notNull(),
     back: text("back").notNull(),
-    deckId: integer("deck_id")
+    nextReview: timestamp("next_review_date")
+        .default(sql`CURRENT_TIMESTAMP`)
+        .notNull(),
+    deckId: serial("deck_id")
         .notNull()
         .references(() => deck.id, { onDelete: "cascade" }),
 });

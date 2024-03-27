@@ -1,31 +1,31 @@
 import { CardType } from "@/types/cardType";
 import {
-    Dialog,
-    DialogContent,
-    DialogTitle,
-    DialogDescription,
-    DialogHeader,
-    DialogFooter,
-} from "@/components/ui/dialog";
-import {
     DropdownMenu,
     DropdownMenuTrigger,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Ellipsis, Info, Trash } from "lucide-react";
+import { Ellipsis, Info, Pencil, Trash } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import FormDialog from "./form-dialog";
+import DeleteDialog from "./delete-dialog";
 
 interface CardPreviewProps {
     card: CardType;
     deleteCard: (cardId: CardType["id"]) => void;
+    editCard: (cardId: CardType["id"], updatedCard: Partial<CardType>) => void;
 }
 
-export default function CardPreview({ card, deleteCard }: CardPreviewProps) {
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+export default function CardPreview({
+    card,
+    deleteCard,
+    editCard,
+}: CardPreviewProps) {
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
 
     return (
         <>
@@ -49,12 +49,22 @@ export default function CardPreview({ card, deleteCard }: CardPreviewProps) {
                                     <Info className="mr-2 h-4 w-4" />
                                     View
                                 </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    className="cursor-pointer hover:bg-foreground/10"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setIsEditing(true);
+                                    }}
+                                >
+                                    <Pencil className="mr-2 h-4 w-4" />
+                                    Edit
+                                </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
                                     className="cursor-pointer text-red-600 hover:bg-red-600/10"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        setIsDialogOpen(true);
+                                        setIsDeleting(true);
                                     }}
                                 >
                                     <Trash className="mr-2 h-4 w-4" />
@@ -68,35 +78,20 @@ export default function CardPreview({ card, deleteCard }: CardPreviewProps) {
                     </p>
                 </div>
             </Link>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle className="mb-2">
-                            Are you absolutely sure?
-                        </DialogTitle>
-                        <DialogDescription>
-                            This action cannot be undone. This will permanently
-                            delete this card.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter>
-                        <Button
-                            variant="secondary"
-                            onClick={() => setIsDialogOpen(false)}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            type="submit"
-                            onClick={() => deleteCard(card.id)}
-                            variant={"destructive"}
-                        >
-                            <Trash className="mr-2 h-4 w-4" />
-                            Delete
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+            <FormDialog
+                title="Edit card"
+                description="Change the contents of your card"
+                open={isEditing}
+                onOpenChange={setIsEditing}
+                initialData={{ front: card.front, back: card.back }}
+                onSubmit={(updatedCard) => editCard(card.id, updatedCard)}
+            />
+            <DeleteDialog
+                open={isDeleting}
+                onOpenChange={setIsDeleting}
+                description="This action cannot be undone. This will permanently delete the card."
+                onConfirm={() => deleteCard(card.id)}
+            />
         </>
     );
 }

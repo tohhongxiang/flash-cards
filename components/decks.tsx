@@ -12,10 +12,9 @@ interface DecksProps {
 
 export default function Decks({ decks }: DecksProps) {
     const [deckItems, setDeckItems] = useState(decks);
-    const handleAddDeck = (deck: CreatedDeckType) => {
-        addDeck(deck);
-        const id = (deckItems.at(-1)?.id || 0) + 1;
-        setDeckItems((c) => [{ ...deck, id, cards: [] }, ...c]);
+    const handleAddDeck = async (deck: CreatedDeckType) => {
+        const newDeck = await addDeck(deck);
+        setDeckItems((c) => [{ ...newDeck, cards: [] }, ...c]);
     };
 
     const handleDeleteDeck = (id: DeckType["id"]) => {

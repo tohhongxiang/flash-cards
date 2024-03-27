@@ -5,6 +5,7 @@ export type CardType = {
     front: string;
     back: string;
     deckId: DeckType["id"];
+    nextReview: Date;
 };
 
 export type CreatedCardType = Omit<CardType, "id" | "deckId">;
