@@ -2,10 +2,12 @@
 
 import { CreatedDeckType, DeckType } from "@/types/deckType";
 import AddDeck from "./add-deck";
-import { addDeck, deleteDeck, editDeck } from "@/actions/deckActions";
 import { useEffect, useState } from "react";
 import DeckPreview from "./deck-preview";
 import { useRouter } from "next/navigation";
+import createDeck from "@/features/deck/create-deck";
+import deleteDeck from "@/features/deck/delete-deck";
+import updateDeck from "@/features/deck/update-deck";
 
 interface DecksProps {
     decks: DeckType[];
@@ -14,7 +16,7 @@ interface DecksProps {
 export default function Decks({ decks }: DecksProps) {
     const [deckItems, setDeckItems] = useState(decks);
     const handleAddDeck = async (deck: CreatedDeckType) => {
-        const newDeck = await addDeck(deck);
+        const newDeck = await createDeck(deck);
         setDeckItems((c) => [{ ...newDeck, cards: [] }, ...c]);
     };
 
@@ -27,7 +29,7 @@ export default function Decks({ decks }: DecksProps) {
         id: DeckType["id"],
         updatedDeck: Partial<DeckType>
     ) => {
-        editDeck(id, updatedDeck);
+        updateDeck(id, updatedDeck);
         setDeckItems((c) =>
             c.map((d) => (d.id === id ? { ...d, ...updatedDeck } : d))
         );

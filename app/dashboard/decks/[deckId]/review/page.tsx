@@ -1,12 +1,12 @@
+import getPendingReviewCards from "@/features/card/get-pending-review-cards";
 import ReviewCards from "./_components/review-cards";
-import { getCards } from "@/actions/cardActions";
 
 export default async function ReviewPage({
     params,
 }: {
     params: { deckId: string };
 }) {
-    const cards = await getCards(parseInt(params.deckId), { toReview: false });
+    const cards = await getPendingReviewCards(parseInt(params.deckId));
 
     if (!cards) {
         return <p>Deck not found</p>;

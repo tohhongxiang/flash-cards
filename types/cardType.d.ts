@@ -12,4 +12,14 @@ export type CardType = {
     currentIntervalSeconds: number;
 };
 
-export type CreatedCardType = Omit<CardType, "id" | "deckId">;
+export type CreatedCardType = Omit<
+    CardType,
+    | "id"
+    | "nextReview"
+    | "stage"
+    | "easeFactor"
+    | "currentStep"
+    | "currentIntervalSeconds"
+>;
+
+export type FeedbackType = "AGAIN" | "HARD" | "GOOD" | "EASY";

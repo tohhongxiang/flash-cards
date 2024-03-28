@@ -1,16 +1,14 @@
 "use client";
 
-import { updateCardAfterReview } from "@/actions/cardActions";
-import {
-    calculateUpdatedCard,
-    formatSecondsToHumanReadableTime,
-} from "@/actions/utils";
+import { calculateUpdatedCard } from "@/features/card/utils/calculate-updated-card";
 import { Button } from "@/components/ui/button";
+import formatSecondsToHumanReadableTime from "@/lib/format-seconds-to-human-readable-time";
 import toTitleCase from "@/lib/to-title-case";
-import { CardType } from "@/types/cardType";
+import { CardType, FeedbackType } from "@/types/cardType";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import updateCardAfterReview from "@/features/card/update-card-after-review";
 
 interface ReviewCardProps {
     cards: CardType[];
@@ -20,7 +18,7 @@ export default function ReviewCards({ cards }: ReviewCardProps) {
     const [index, setIndex] = useState(0);
     const [isShowingAnswer, setIsShowingAnswer] = useState(false);
 
-    const handleFeedback = (feedback: "AGAIN" | "HARD" | "GOOD" | "EASY") => {
+    const handleFeedback = (feedback: FeedbackType) => {
         updateCardAfterReview(cards[index].id, feedback);
         setIndex((c) => c + 1);
         setIsShowingAnswer(false);

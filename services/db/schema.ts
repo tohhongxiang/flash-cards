@@ -1,4 +1,4 @@
-import { ONE_MINUTE } from "@/actions/constants";
+import { ONE_MINUTE } from "@/features/constants";
 import { relations, sql } from "drizzle-orm";
 import {
     text,

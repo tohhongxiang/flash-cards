@@ -1,5 +1,5 @@
-import { getDeck } from "@/actions/deckActions";
 import Deck from "@/components/deck";
+import getDeck from "@/features/deck/get-deck";
 
 export default async function SpecificDeckPage({
     params,

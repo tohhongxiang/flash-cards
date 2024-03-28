@@ -15,12 +15,14 @@ import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { CirclePlus, Save } from "lucide-react";
 import { CreatedCardType } from "@/types/cardType";
+import { DeckType } from "@/types/deckType";
 
 interface AddCardProps {
+    deckId: DeckType["id"];
     onSubmit: (card: CreatedCardType) => void;
 }
 
-export default function AddCard({ onSubmit }: AddCardProps) {
+export default function AddCard({ onSubmit, deckId }: AddCardProps) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const [front, setFront] = useState("");
@@ -28,7 +30,7 @@ export default function AddCard({ onSubmit }: AddCardProps) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit({ front, back });
+        onSubmit({ front, back, deckId });
         setFront("");
         setBack("");
         setIsDialogOpen(false);

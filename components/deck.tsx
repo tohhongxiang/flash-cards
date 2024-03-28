@@ -3,11 +3,13 @@
 import { DeckType } from "@/types/deckType";
 import AddCard from "./add-card";
 import { CardType, CreatedCardType } from "@/types/cardType";
-import { addCard, deleteCard, editCard } from "@/actions/cardActions";
 import { useState } from "react";
 import CardPreview from "./card-preview";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import createCard from "@/features/card/create-card";
+import deleteCard from "@/features/card/delete-card";
+import updateCard from "@/features/card/update-card";
 
 interface DeckProps {
     deck: DeckType;
@@ -20,7 +22,7 @@ export default function Deck({ deck }: DeckProps) {
         deckId: DeckType["id"],
         card: CreatedCardType
     ) => {
-        const newCard = await addCard({ ...card, deckId });
+        const newCard = await createCard({ ...card, deckId });
         setDeckItem((previousDeck) => ({
             ...previousDeck,
             cards: [newCard, ...previousDeck.cards],
@@ -39,7 +41,7 @@ export default function Deck({ deck }: DeckProps) {
         cardId: CardType["id"],
         updatedCard: Partial<CardType>
     ) => {
-        editCard(cardId, updatedCard);
+        updateCard(cardId, updatedCard);
         setDeckItem((previousDeck) => ({
             ...previousDeck,
             cards: previousDeck.cards.map((card) =>
@@ -71,6 +73,7 @@ export default function Deck({ deck }: DeckProps) {
             <ul className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                 <li>
                     <AddCard
+                        deckId={deck.id}
                         onSubmit={(card) => handleCreateCard(deckItem.id, card)}
                     />
                 </li>
