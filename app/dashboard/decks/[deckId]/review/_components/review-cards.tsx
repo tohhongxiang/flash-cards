@@ -1,7 +1,12 @@
 "use client";
 
 import { updateCardAfterReview } from "@/actions/cardActions";
+import {
+    calculateUpdatedCard,
+    formatSecondsToHumanReadableTime,
+} from "@/actions/utils";
 import { Button } from "@/components/ui/button";
+import toTitleCase from "@/lib/to-title-case";
 import { CardType } from "@/types/cardType";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -26,6 +31,9 @@ export default function ReviewCards({ cards }: ReviewCardProps) {
         return () => router.refresh(); // refresh router when leaving review
     }, [router]);
 
+    const currentUpdatedCardAfterReview =
+        index < cards.length ? calculateUpdatedCard(cards[index]) : null;
+
     return (
         <div className="flex flex-col items-center justify-center gap-4">
             {index < cards.length ? (
@@ -42,35 +50,32 @@ export default function ReviewCards({ cards }: ReviewCardProps) {
                             <p className="text-3xl">{cards[index].back}</p>
                         )}
                     </button>
-                    {isShowingAnswer ? (
+                    {isShowingAnswer && currentUpdatedCardAfterReview ? (
                         <div className="flex gap-4">
-                            <Button
-                                size="lg"
-                                variant="secondary"
-                                onClick={() => handleFeedback("AGAIN")}
-                            >
-                                Again
-                            </Button>
-                            <Button
-                                size="lg"
-                                variant="secondary"
-                                onClick={() => handleFeedback("HARD")}
-                            >
-                                Hard
-                            </Button>
-                            <Button
-                                size="lg"
-                                variant="secondary"
-                                onClick={() => handleFeedback("GOOD")}
-                            >
-                                Good
-                            </Button>
-                            <Button
-                                size="lg"
-                                onClick={() => handleFeedback("EASY")}
-                            >
-                                Easy
-                            </Button>
+                            {Object.entries(currentUpdatedCardAfterReview).map(
+                                ([feedback, updatedCard]) => (
+                                    <Button
+                                        key={feedback}
+                                        size="lg"
+                                        variant="secondary"
+                                        onClick={() =>
+                                            handleFeedback(
+                                                feedback as
+                                                    | "AGAIN"
+                                                    | "HARD"
+                                                    | "EASY"
+                                                    | "GOOD"
+                                            )
+                                        }
+                                    >
+                                        {toTitleCase(feedback)} (
+                                        {formatSecondsToHumanReadableTime(
+                                            updatedCard.currentIntervalSeconds
+                                        )}
+                                        )
+                                    </Button>
+                                )
+                            )}
                         </div>
                     ) : (
                         <div>

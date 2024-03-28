@@ -48,9 +48,10 @@ export default function Deck({ deck }: DeckProps) {
         }));
     };
 
-    const cardsToReview = deckItem.cards.filter(
-        (card) => card.nextReview.getTime() <= new Date().getTime() + 1000 // 1 second delay time for adding
-    );
+    // const cardsToReview = deckItem.cards.filter(
+    //     (card) => card.nextReview.getTime() <= new Date().getTime() + 1000 // 1 second delay time for adding
+    // );
+    const cardsToReview = deckItem.cards;
 
     return (
         <div className="flex flex-col items-center p-4">
