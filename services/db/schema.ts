@@ -43,3 +43,21 @@ export const deckRelations = relations(deck, ({ many }) => ({
 export const cardRelations = relations(card, ({ one }) => ({
     deck: one(deck, { fields: [card.deckId], references: [deck.id] }),
 }));
+
+export const userTable = pgTable("user", {
+    id: text("id").primaryKey(),
+    github_id: text("github_id").unique(),
+    username: text("username").notNull().unique(),
+    hashedPassword: text("hashed_password"),
+});
+
+export const sessionTable = pgTable("session", {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+        .notNull()
+        .references(() => userTable.id),
+    expiresAt: timestamp("expires_at", {
+        withTimezone: true,
+        mode: "date",
+    }).notNull(),
+});

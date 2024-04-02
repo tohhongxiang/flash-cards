@@ -138,7 +138,14 @@ Then fill up `.eslint.json`
 
 # Resources
 
+## Designs
+
 -   https://dribbble.com/shots/22970964-Language-flashcards
 -   https://dribbble.com/shots/14043352-Flashcard-App-Concept
 -   https://dribbble.com/shots/22487908-Kanji-Study-Flashcards
 -   https://dribbble.com/shots/18574591-Language-app-flashcard-decks
+
+## Auth
+
+-   https://lucia-auth.com/
+-   https://www.youtube.com/watch?v=JIIy7VkiTqU

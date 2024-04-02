@@ -10,7 +10,7 @@ export default function Home() {
                     <Link href="/dashboard/decks">Dashboard</Link>
                 </Button>
                 <Button variant="secondary" asChild>
-                    <Link href="/signup">Signup</Link>
+                    <Link href="/sign-up">Signup</Link>
                 </Button>
             </div>
         </main>
