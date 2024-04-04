@@ -3,6 +3,21 @@ import adapter from "./adapter";
 import { cookies } from "next/headers";
 import { cache } from "react";
 
+declare module "lucia" {
+    interface Register {
+        Lucia: typeof lucia;
+        DatabaseUserAttributes: DatabaseUserAttributes;
+    }
+
+    interface DatabaseUserAttributes {
+        id: string;
+        username: string;
+        email: string;
+        profilePictureURL: string;
+        name: string;
+    }
+}
+
 export const lucia = new Lucia(adapter, {
     sessionCookie: {
         attributes: {
@@ -14,6 +29,9 @@ export const lucia = new Lucia(adapter, {
         return {
             id: attributes.id,
             username: attributes.username,
+            email: attributes.email,
+            profilePictureURL: attributes.profilePictureURL,
+            name: attributes.name,
         };
     },
 });
@@ -53,16 +71,3 @@ export const validateRequest = cache(async () => {
         session,
     };
 });
-
-// IMPORTANT!
-declare module "lucia" {
-    interface Register {
-        Lucia: typeof lucia;
-        DatabaseUserAttributes: DatabaseUserAttributes;
-    }
-
-    interface DatabaseUserAttributes {
-        id: string;
-        username: string;
-    }
-}

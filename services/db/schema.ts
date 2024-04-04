@@ -46,16 +46,33 @@ export const cardRelations = relations(card, ({ one }) => ({
 
 export const userTable = pgTable("user", {
     id: text("id").primaryKey(),
-    github_id: text("github_id").unique(),
-    username: text("username").notNull().unique(),
+    username: text("username").unique(),
     hashedPassword: text("hashed_password"),
+    email: text("email").unique(),
+    profilePictureURL: text("profile_picture_url"),
+    name: text("name"),
 });
 
 export const sessionTable = pgTable("session", {
     id: text("id").primaryKey(),
     userId: text("user_id")
         .notNull()
-        .references(() => userTable.id),
+        .references(() => userTable.id, { onDelete: "cascade" }),
+    expiresAt: timestamp("expires_at", {
+        withTimezone: true,
+        mode: "date",
+    }).notNull(),
+});
+
+export const oauthAccountTable = pgTable("oauth_account", {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+        .notNull()
+        .references(() => userTable.id, { onDelete: "cascade" }),
+    provider: text("provider").notNull(),
+    providerUserId: text("provider_user_id").notNull(),
+    accessToken: text("access_token").notNull(),
+    refreshToken: text("refresh_token"),
     expiresAt: timestamp("expires_at", {
         withTimezone: true,
         mode: "date",

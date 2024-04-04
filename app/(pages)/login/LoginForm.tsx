@@ -13,10 +13,11 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { loginSchema } from "./schema";
-import { login } from "./actions/login";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import { Separator } from "@/components/ui/separator";
+import { login, loginSchema } from "@/features/auth/login";
+import { createGoogleAuthorisationURL } from "@/features/auth/create-google-authorisation-url";
 
 export default function LoginForm() {
     const form = useForm<z.infer<typeof loginSchema>>({
@@ -43,9 +44,31 @@ export default function LoginForm() {
         }
     };
 
+    const onGoogleSignInClicked = async () => {
+        const result = await createGoogleAuthorisationURL();
+        if (result.error) {
+            toast({
+                variant: "destructive",
+                description: result.error,
+            });
+        } else if (result.success) {
+            window.location.href = result.data.toString();
+        }
+    };
+
     return (
         <div className="mx-auto max-w-md p-8">
             <h1 className="mb-8 text-2xl font-bold">Login</h1>
+            <div className="flex w-full items-center justify-center">
+                <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={onGoogleSignInClicked}
+                >
+                    Sign in with Google
+                </Button>
+            </div>
+            <Separator className="my-4" />
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}

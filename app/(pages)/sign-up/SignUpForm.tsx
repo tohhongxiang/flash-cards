@@ -13,10 +13,9 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { signupSchema } from "./schema";
-import { signUp } from "./actions/signup";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import { signUp, signupSchema } from "@/features/auth/sign-up";
 
 export default function SignUpForm() {
     const form = useForm<z.infer<typeof signupSchema>>({

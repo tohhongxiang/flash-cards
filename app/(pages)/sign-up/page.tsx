@@ -1,6 +1,7 @@
 import { validateRequest } from "@/services/auth";
 import SignUpForm from "./SignUpForm";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export default async function SignUpPage() {
     const { user } = await validateRequest();
@@ -8,5 +9,14 @@ export default async function SignUpPage() {
     if (user) {
         return redirect("/dashboard");
     }
-    return <SignUpForm />;
+    return (
+        <>
+            <div>
+                <p>
+                    Have an account? <Link href="/login">Log in</Link>
+                </p>
+            </div>
+            <SignUpForm />
+        </>
+    );
 }
